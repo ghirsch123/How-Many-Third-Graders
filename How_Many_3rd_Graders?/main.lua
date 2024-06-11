@@ -18,6 +18,8 @@ local time_between_shots = 0
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
+    love.window.setTitle("How Many Third Graders?")
+
     -- more "retro-looking" font object we can use for any text
     smallFont = love.graphics.newFont('font.ttf', 32)
 
