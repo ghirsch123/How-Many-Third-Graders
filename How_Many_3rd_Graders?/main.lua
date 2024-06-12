@@ -21,10 +21,13 @@ function love.load()
     love.window.setTitle("How Many Third Graders?")
 
     -- more "retro-looking" font object we can use for any text
-    smallFont = love.graphics.newFont('font.ttf', 32)
+    smallFont = love.graphics.newFont('font.ttf', 8)
+    largeFont = love.graphics.newFont('font.ttf', 32)
+
+    Score = 0
 
     -- set LÖVE2D's active font to the smallFont obect
-    love.graphics.setFont(smallFont)
+    love.graphics.setFont(largeFont)
 
     -- initialize window with virtual resolution
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -51,7 +54,7 @@ function love.update(dt)
         time_between_shots = 0
     end
     if gameState == 'play' then
-        enemies:update(dt)
+        Score = enemies:update(dt, player, Score)
     end
     player:updatebullets(dt)
 end
@@ -86,6 +89,10 @@ function love.draw()
         VIRTUAL_WIDTH,        -- number of pixels to center within
         'center'    
 )
+    love.graphics.setColor(0,0,0,1)
+    love.graphics.printf(tostring(Score), 5, VIRTUAL_HEIGHT/20 - smallFont:getHeight() / 2,
+                        VIRTUAL_WIDTH, 'center')
+
     player:draw()
     enemies:draw()
     push:apply('end')

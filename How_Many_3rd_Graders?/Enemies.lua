@@ -2,27 +2,45 @@ Enemies = Class{}
 
 function Enemies:init()
     self.enemies = {} -- table to hold all of the spawned enemies
-    self.spawnInterval = math.random(0.5, 2) -- randomish spawn time between enemies
+    self.spawnInterval = math.random(0.5, 3) -- randomish spawn time between enemies
     self.spawnTimer = 0 -- timer to track when to spawn the next enemy
 end
 
-function Enemies:update(dt)
+function Enemies:update(dt, player, score)
     self.spawnTimer = self.spawnTimer + dt
     if self.spawnTimer >= self.spawnInterval then
         self:spawnEnemy() --  need to make this class down below
-        self.spawnTimer = math.random(0.5,2)
+        self.spawnTimer = 0
+        self.spawnTimer = math.random(0.5,3)
     end
     -- now update the position of each enemy like the bullets
     for i = #self.enemies, 1, -1 do -- iterate over the enemies in reverse order
         local enemy = self.enemies[i]
+        -- calculate direction vector towards the player. do this here since it being updated after every frame
+        local directionX = player.x - enemy.x
+        local directionY = player.y - enemy.y
+        -- can still use the distance formula here
+        local length = math.sqrt(directionX^2+directionY^2)
+        -- normalize the vectors
+        directionX = directionX/length
+        directionY = directionY/length
         -- update enemy position
-        enemy.x = enemy.x + enemy.directionX * enemy.speed * dt
-        enemy.y = enemy.y + enemy.directionY * enemy.speed * dt
+        enemy.x = enemy.x + directionX * enemy.speed * dt
+        enemy.y = enemy.y + directionY * enemy.speed * dt
         -- remove the enemy if it leaves the screen
         if enemy.y < 0 or enemy.y > VIRTUAL_HEIGHT or enemy.x < 0 or enemy.x > VIRTUAL_WIDTH then
             table.remove(self.enemies, i)
         end
+        -- remove enemy if it collides with a bullet
+        if player:checkbulletCollision(enemy) then
+            table.remove(self.enemies, i)
+            score = score + 1
+        end
+        if player:checkenemyCollision(enemy) then
+            table.remove(self.enemies, i)
+        end
     end
+    return score
 end
 
 function Enemies:spawnEnemy()
@@ -43,16 +61,10 @@ function Enemies:spawnEnemy()
         y = math.random(0, VIRTUAL_HEIGHT)
     end
 
-    local speed = math.random(100, 200)
-    -- calculate the direction vector to the center of the screen
-    local directionX = VIRTUAL_WIDTH/2 - x
-    local directionY = VIRTUAL_HEIGHT/2 - y
-    local length = math.sqrt(directionX^2+directionY^2) --  distance formula
-    -- normalize the vectors
-    directionX = directionX/length
-    directionY = directionY/length
+    -- speed of enemies
+    local speed = math.random(50, 150)
     -- now we can create the enemy
-    local enemy = {x = x, y = y, speed = speed, directionX = directionX, directionY = directionY}
+    local enemy = {x = x, y = y, speed = speed, width = 3, height = 3}
     -- add enemy to table
     table.insert(self.enemies, enemy)
 end
@@ -60,6 +72,6 @@ end
 function Enemies:draw()
     love.graphics.setColor(0, 0, 0, 1)
     for _, enemy in ipairs(self.enemies) do
-        love.graphics.rectangle("fill", enemy.x, enemy.y, 3, 3)
+        love.graphics.rectangle("fill", enemy.x, enemy.y, enemy.width, enemy.height)
     end
 end
