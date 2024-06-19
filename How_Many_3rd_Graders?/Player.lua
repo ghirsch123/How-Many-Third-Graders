@@ -68,7 +68,7 @@ end
 function Player:checkbulletCollision(enemy)
     for i = #self.bullets, 1, -1 do
         local bullet = self.bullets[i]
-        local bulletSize = 10 -- collision box
+        local bulletSize = 12 -- collision box
         if bullet.x < enemy.x + enemy.width and bullet.x + bulletSize > enemy.x and 
         bullet.y < enemy.y + enemy.height and bullet.y + bulletSize > enemy.y then
             table.remove(self.bullets, i)
