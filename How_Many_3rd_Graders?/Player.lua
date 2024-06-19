@@ -29,10 +29,15 @@ function Player:update(dt)
 end
 
 -- how the bullets will be represented
-function Player:shoot()
+function Player:punch()
     local bullet = {x = self.x+2, y = self.y+2, direction = self.direction}
     -- stored in a table
     table.insert(self.bullets, bullet)
+end
+
+function Player:kick()
+    local kick = {x = self.x+2, y = self.y+2, direction = self.direction}
+    table.insert(self.kicks, kick)
 end
 
 -- update the bullets position over time

@@ -9,7 +9,8 @@ WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
-local shoot_interval = 0.15
+local punch_interval = 0.15
+local kick_interval = 0.5
 local time_between_shots = 0
 
 --[[
@@ -44,10 +45,10 @@ end
 function love.update(dt)
     player:update(dt)
 
-    if love.keyboard.isDown('space') then
+    if love.keyboard.isDown('z') then
         time_between_shots = time_between_shots + dt
-        if time_between_shots >= shoot_interval/2 then
-            player:shoot()
+        if time_between_shots >= punch_interval/2 then
+            player:punch()
             time_between_shots = 0
         end
     else
@@ -65,8 +66,8 @@ function love.keypressed(key)
         -- function LÖVE gives us to terminate application
         love.event.quit()
     end
-    if key == 'space' then
-        player:shoot()
+    if key == 'z' then
+        player:punch()
     end
     if key == 'enter' or key == 'return' then
         if gameState == 'start' then
